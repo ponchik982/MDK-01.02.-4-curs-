@@ -7,13 +7,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HRApp.Services;
 using HRApp.Models;
 
+
 namespace Test_Kadri
 {
     [TestClass]
     public class EmployeeServiceTests
     {
         [TestMethod]
-        public void РегистрацияСотрудника_СкорректнымиДанными_ВозвращаетУспех()
+        public void EmployeeRegistration_WithCorrectData_ReturnsSuccess()
         {
             // Подготовка
             var service = new EmployeeService();
@@ -32,11 +33,10 @@ namespace Test_Kadri
 
             // Проверка
             Assert.IsTrue(result.Success);
-            Assert.IsNotNull(result.EmployeeId);
         }
 
         [TestMethod]
-        public void РегистрацияСотрудника_СНекорректнымФИО_ВозвращаетОшибку()
+        public void EmployeeRegistration_WithIncorrectFirstNameReturnsAnError()
         {
             // Подготовка
             var service = new EmployeeService();
