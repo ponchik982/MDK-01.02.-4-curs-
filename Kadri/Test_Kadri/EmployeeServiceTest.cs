@@ -14,7 +14,7 @@ namespace Test_Kadri
     public class EmployeeServiceTests
     {
         [TestMethod]
-        public void EmployeeRegistration_WithCorrectData_ReturnsSuccess()
+        public void РегистрацияСотрудника_СкорректнымиДанными_ВозвращаетУспех()
         {
             // Подготовка
             var service = new EmployeeService();
@@ -33,10 +33,11 @@ namespace Test_Kadri
 
             // Проверка
             Assert.IsTrue(result.Success);
+            Assert.IsNotNull(result.EmployeeId);
         }
 
         [TestMethod]
-        public void EmployeeRegistration_WithIncorrectFirstNameReturnsAnError()
+        public void РегистрацияСотрудника_СНекорректнымФИО_ВозвращаетОшибку()
         {
             // Подготовка
             var service = new EmployeeService();

@@ -1,70 +1,94 @@
-﻿using System;
+﻿using HRApp.Models;
+using HRApp.Services;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using HRApp.Models;
 
-namespace HRApp.Services
+namespace HRApp
 {
+    // Сервис регистрации сотрудников
     public class EmployeeService
     {
-        private readonly List<Employee> _employees = new List<Employee>();
-        private int _nextId = 1;
+        private List<Employee> employees = new List<Employee>();
+        private int nextId = 1;
 
-        public (bool Success, string ErrorMessage) RegisterEmployee(EmployeeRegistrationData data)
+        public bool RegisterEmployee(string fullName, DateTime birthDate, string position, int departmentId, DateTime hireDate, string employmentType, out string errorMessage)
         {
-            // Проверка на null
-            if (data == null)
-                return (false, "Данные не переданы");
+            errorMessage = "";
 
             // Проверка ФИО
-            if (string.IsNullOrWhiteSpace(data.FullName) ||
-                !Regex.IsMatch(data.FullName, @"^[А-Яа-яЁё]+\s[А-Яа-яЁё]+\s[А-Яа-яЁё]+$"))
-                return (false, "Некорректное ФИО");
-
-            // Проверка возраста (не младше 18 лет)
-            var age = DateTime.Today.Year - data.BirthDate.Year;
-            if (data.BirthDate.Date > DateTime.Today.AddYears(-age)) age--;
-
-            if (data.BirthDate == default || age < 18)
-                return (false, "Некорректная дата рождения (меньше 18 лет)");
-
-            // Проверка должности
-            if (string.IsNullOrWhiteSpace(data.Position))
-                return (false, "Должность обязательна");
-
-            // Проверка отдела
-            if (data.DepartmentId <= 0)
-                return (false, "Некорректный отдел");
-
-            // Проверка даты приёма
-            if (data.HireDate < data.BirthDate.AddYears(18) || data.HireDate > DateTime.Today)
-                return (false, "Некорректная дата приёма на работу");
-
-            // Проверка типа занятости
-            if (string.IsNullOrWhiteSpace(data.EmploymentType))
-                return (false, "Тип занятости обязателен");
-
-            // Проверка дубликатов
-            foreach (var emp in _employees)
+            if (string.IsNullOrWhiteSpace(fullName))
             {
-                if (emp.FullName == data.FullName && emp.BirthDate == data.BirthDate)
-                    return (false, "Сотрудник уже зарегистрирован");
+                errorMessage = "Введите ФИО.";
+                return false;
             }
 
-            // Добавление нового сотрудника
+            // Проверка возраста
+            int age = DateTime.Now.Year - birthDate.Year;
+            if (birthDate > DateTime.Now.AddYears(-age)) age--;
+            if (age < 18)
+            {
+                errorMessage = "Сотрудник должен быть старше 18 лет.";
+                return false;
+            }
+
+            // Проверка должности
+            if (string.IsNullOrWhiteSpace(position))
+            {
+                errorMessage = "Введите должность.";
+                return false;
+            }
+
+            // Проверка отдела
+            if (departmentId <= 0)
+            {
+                errorMessage = "Введите корректный ID отдела.";
+                return false;
+            }
+
+            // Проверка даты приёма
+            if (hireDate > DateTime.Now)
+            {
+                errorMessage = "Дата приёма не может быть в будущем.";
+                return false;
+            }
+
+            // Проверка типа занятости
+            if (string.IsNullOrWhiteSpace(employmentType))
+            {
+                errorMessage = "Введите тип занятости.";
+                return false;
+            }
+
+            // Проверка дубликатов
+            foreach (var emp in employees)
+            {
+                if (emp.FullName == fullName && emp.BirthDate == birthDate)
+                {
+                    errorMessage = "Такой сотрудник уже зарегистрирован.";
+                    return false;
+                }
+            }
+
+            // Добавляем сотрудника
             var newEmployee = new Employee
             {
-                Id = _nextId++,
-                FullName = data.FullName,
-                BirthDate = data.BirthDate,
-                Position = data.Position,
-                DepartmentId = data.DepartmentId,
-                HireDate = data.HireDate,
-                EmploymentType = data.EmploymentType
+                Id = nextId++,
+                FullName = fullName,
+                BirthDate = birthDate,
+                Position = position,
+                DepartmentId = departmentId,
+                HireDate = hireDate,
+                EmploymentType = employmentType
             };
 
-            _employees.Add(newEmployee);
-            return (true, null);
+            employees.Add(newEmployee);
+            return true;
+        }
+
+        public List<Employee> GetAll()
+        {
+            return employees;
         }
     }
 }
