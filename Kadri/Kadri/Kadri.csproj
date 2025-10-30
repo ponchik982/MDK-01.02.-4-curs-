@@ -49,6 +49,12 @@
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeService.cs" />
     <Compile Include="EmployeeRegistrationData.cs" />
+    <Compile Include="MainHRForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainHRForm.Designer.cs">
+      <DependentUpon>MainHRForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="RegisterEmployee.cs">
       <SubType>Form</SubType>
     </Compile>
