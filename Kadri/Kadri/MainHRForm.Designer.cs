@@ -23,46 +23,75 @@ namespace Kadri
 
         private void InitializeComponent()
         {
-            this.btnRegisterEmployee = new Button();
-            this.btnViewEmployees = new Button();
-            this.btnDeleteEmployee = new Button();
-            this.label1 = new Label();
-
-            // MainHRForm
-            this.Text = "Кадровый учет";
-            this.Size = new Size(400, 300);
-            this.StartPosition = FormStartPosition.CenterScreen;
-
-            // label1
-            this.label1.Text = "Кадровый учет";
-            this.label1.Font = new Font("Microsoft Sans Serif", 16F, FontStyle.Bold);
-            this.label1.Location = new Point(120, 20);
-            this.label1.Size = new Size(200, 30);
-
+            this.btnRegisterEmployee = new System.Windows.Forms.Button();
+            this.btnViewEmployees = new System.Windows.Forms.Button();
+            this.btnDeleteEmployee = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.SuspendLayout();
+            // 
             // btnRegisterEmployee
+            // 
+            this.btnRegisterEmployee.Location = new System.Drawing.Point(217, 53);
+            this.btnRegisterEmployee.Name = "btnRegisterEmployee";
+            this.btnRegisterEmployee.Size = new System.Drawing.Size(200, 40);
+            this.btnRegisterEmployee.TabIndex = 1;
             this.btnRegisterEmployee.Text = "Добавить сотрудника";
-            this.btnRegisterEmployee.Location = new Point(100, 80);
-            this.btnRegisterEmployee.Size = new Size(200, 40);
-            this.btnRegisterEmployee.Click += new EventHandler(this.btnRegisterEmployee_Click);
-
+            this.btnRegisterEmployee.Click += new System.EventHandler(this.btnRegisterEmployee_Click);
+            // 
             // btnViewEmployees
+            // 
+            this.btnViewEmployees.Location = new System.Drawing.Point(11, 53);
+            this.btnViewEmployees.Name = "btnViewEmployees";
+            this.btnViewEmployees.Size = new System.Drawing.Size(200, 40);
+            this.btnViewEmployees.TabIndex = 2;
             this.btnViewEmployees.Text = "Просмотр сотрудников";
-            this.btnViewEmployees.Location = new Point(100, 140);
-            this.btnViewEmployees.Size = new Size(200, 40);
-            this.btnViewEmployees.Click += new EventHandler(this.btnViewEmployees_Click);
-
+            this.btnViewEmployees.Click += new System.EventHandler(this.btnViewEmployees_Click);
+            // 
             // btnDeleteEmployee
+            // 
+            this.btnDeleteEmployee.Location = new System.Drawing.Point(423, 53);
+            this.btnDeleteEmployee.Name = "btnDeleteEmployee";
+            this.btnDeleteEmployee.Size = new System.Drawing.Size(200, 40);
+            this.btnDeleteEmployee.TabIndex = 3;
             this.btnDeleteEmployee.Text = "Удалить сотрудника";
-            this.btnDeleteEmployee.Location = new Point(100, 200);
-            this.btnDeleteEmployee.Size = new Size(200, 40);
-            this.btnDeleteEmployee.Click += new EventHandler(this.btnDeleteEmployee_Click);
+            this.btnDeleteEmployee.Click += new System.EventHandler(this.btnDeleteEmployee_Click);
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(217, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(200, 30);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Кадровый учет";
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(12, 99);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(611, 222);
+            this.dataGridView1.TabIndex = 4;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
+            // MainHRForm
+            // 
+            this.ClientSize = new System.Drawing.Size(632, 340);
+            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnRegisterEmployee);
+            this.Controls.Add(this.btnViewEmployees);
+            this.Controls.Add(this.btnDeleteEmployee);
+            this.Name = "MainHRForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Кадровый учет";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.ResumeLayout(false);
 
-            this.Controls.AddRange(new Control[] {
-            this.label1,
-            this.btnRegisterEmployee,
-            this.btnViewEmployees,
-            this.btnDeleteEmployee
-        });
         }
+
+        private DataGridView dataGridView1;
     }
 }

@@ -90,5 +90,66 @@ namespace HRApp
         {
             return employees;
         }
+
+        public List<Employee> GetAllEmployees()
+        {
+            try
+            {
+                // ВРЕМЕННО: возвращаем тестовые данные с EmploymentType
+                return GetTestEmployees();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка при получении списка сотрудников: {ex.Message}");
+            }
+        }
+
+        // Временный метод с тестовыми данными, включая EmploymentType
+        private List<Employee> GetTestEmployees()
+        {
+            return new List<Employee>
+        {
+        new Employee
+            {
+                Id = 1,
+                FullName = "Иванов Иван Иванович",
+                BirthDate = new DateTime(1985, 5, 15),
+                Position = "Менеджер",
+                DepartmentId = 1,
+                HireDate = new DateTime(2020, 1, 10),
+                EmploymentType = "Полная занятость"
+            },
+            new Employee
+            {
+                Id = 2,
+                FullName = "Петрова Анна Сергеевна",
+                BirthDate = new DateTime(1990, 8, 22),
+                Position = "Разработчик",
+                DepartmentId = 2,
+                HireDate = new DateTime(2021, 3, 15),
+                EmploymentType = "Полная занятость"
+            },
+            new Employee
+            {
+                Id = 3,
+                FullName = "Сидоров Алексей Петрович",
+                BirthDate = new DateTime(1988, 12, 5),
+                Position = "Аналитик",
+                DepartmentId = 1,
+                HireDate = new DateTime(2019, 7, 20),
+                EmploymentType = "Частичная занятость"
+            },
+            new Employee
+            {
+                Id = 4,
+                FullName = "Козлова Мария Владимировна",
+                BirthDate = new DateTime(1992, 3, 30),
+                Position = "Стажер",
+                DepartmentId = 3,
+                HireDate = new DateTime(2023, 9, 1),
+                EmploymentType = "Стажировка"
+             }
+        };
+        }
     }
 }
