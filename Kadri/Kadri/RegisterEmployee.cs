@@ -30,6 +30,7 @@ namespace Kadri
                 departmentId,
                 dateTimePicker2.Value,
                 textBox4.Text.Trim(),
+                employmentType.Text,
                 out errorMessage
             );
 

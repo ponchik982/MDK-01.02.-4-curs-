@@ -26,24 +26,22 @@ namespace Kadri
         {
             try
             {
-                // Получаем список сотрудников из сервиса
                 var employees = service.GetAllEmployees();
-
-                // Привязываем данные к DataGridView
                 dataGridView1.DataSource = employees;
 
-                // Настраиваем заголовки столбцов (опционально)
                 if (dataGridView1.Columns.Count > 0)
                 {
                     dataGridView1.Columns["Id"].HeaderText = "ID";
-                    dataGridView1.Columns["FullName"].HeaderText = "ФИО";
+                    dataGridView1.Columns["LastName"].HeaderText = "Фамилия";
+                    dataGridView1.Columns["FirstName"].HeaderText = "Имя";
+                    dataGridView1.Columns["MiddleName"].HeaderText = "Отчество";
+                    dataGridView1.Columns["FullName"].HeaderText = "Полное ФИО";
                     dataGridView1.Columns["BirthDate"].HeaderText = "Дата рождения";
                     dataGridView1.Columns["Position"].HeaderText = "Должность";
                     dataGridView1.Columns["DepartmentId"].HeaderText = "ID отдела";
                     dataGridView1.Columns["HireDate"].HeaderText = "Дата приема";
-                    dataGridView1.Columns["ContactInfo"].HeaderText = "Контактная информация";
+                    dataGridView1.Columns["EmploymentType"].HeaderText = "Тип занятости";
 
-                    // Форматирование дат
                     dataGridView1.Columns["BirthDate"].DefaultCellStyle.Format = "dd.MM.yyyy";
                     dataGridView1.Columns["HireDate"].DefaultCellStyle.Format = "dd.MM.yyyy";
                 }
@@ -52,6 +50,45 @@ namespace Kadri
             {
                 MessageBox.Show($"Ошибка при загрузке сотрудников: {ex.Message}", "Ошибка",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // В методе удаления обновляем получение имени
+        private void DeleteEmployee(int employeeId, string employeeName)
+        {
+            try
+            {
+                string errorMessage;
+                bool success = service.DeleteEmployee(employeeId, out errorMessage);
+
+                if (success)
+                {
+                    MessageBox.Show(
+                        $"Сотрудник {employeeName} успешно удален!",
+                        "Успех",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                    LoadEmployees();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Ошибка при удалении: {errorMessage}",
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Ошибка при удалении сотрудника: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
