@@ -1,62 +1,152 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using HRApp; // Основной namespace
 using HRApp.Services;
 using HRApp.Models;
-
 
 namespace Test_Kadri
 {
     [TestClass]
-    public class EmployeeServiceTests
+    public class EmployeeServiceTest
     {
         [TestMethod]
-        public void РегистрацияСотрудника_СкорректнымиДанными_ВозвращаетУспех()
+        public void RegisterEmployee_ValidData_ShouldReturnTrue()
         {
-            // Подготовка
+            // Arrange
             var service = new EmployeeService();
-            var data = new EmployeeRegistrationData
-            {
-                FullName = "Иванов Сергей Петрович",
-                BirthDate = new DateTime(1985, 4, 15),
-                Position = "Оператор",
-                DepartmentId = 2,
-                HireDate = new DateTime(2023, 9, 1),
-                EmploymentType = "штатный"
-            };
+            string errorMessage;
 
-            // Действие
-            var result = service.RegisterEmployee(data);
+            // Act
+            bool result = service.RegisterEmployee(
+                "Иванов",           // Фамилия
+                "Иван",             // Имя
+                "Иванович",         // Отчество
+                new DateTime(1985, 5, 15),
+                "Менеджер",
+                1,
+                DateTime.Now.AddDays(-365),
+                "Полная занятость",
+                out errorMessage
+            );
 
-            // Проверка
-            Assert.IsTrue(result.Success);
-            Assert.IsNotNull(result.EmployeeId);
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual("", errorMessage);
         }
 
         [TestMethod]
-        public void РегистрацияСотрудника_СНекорректнымФИО_ВозвращаетОшибку()
+        public void RegisterEmployee_Under18_ShouldReturnError()
         {
-            // Подготовка
+            // Arrange
             var service = new EmployeeService();
-            var data = new EmployeeRegistrationData
+            string errorMessage;
+
+            // Act
+            bool result = service.RegisterEmployee(
+                "Молодой",
+                "Сотрудник",
+                "", // Пустое отчество
+                DateTime.Now.AddYears(-17), // 17 лет
+                "Стажер",
+                1,
+                DateTime.Now.AddDays(-10),
+                "Стажировка",
+                out errorMessage
+            );
+
+            // Assert
+            Assert.IsFalse(result);
+            Assert.AreEqual("Сотрудник должен быть старше 18 лет.", errorMessage);
+        }
+
+        [TestMethod]
+        public void DeleteEmployee_ExistingEmployee_ShouldReturnTrue()
+        {
+            // Arrange
+            var service = new EmployeeService();
+            string errorMessage;
+
+            // Сначала регистрируем сотрудника
+            service.RegisterEmployee(
+                "Тестовый",
+                "Сотрудник",
+                "Для удаления",
+                new DateTime(1990, 1, 1),
+                "Тестовая должность",
+                1,
+                DateTime.Now.AddDays(-100),
+                "Полная занятость",
+                out errorMessage
+            );
+
+            // Находим ID зарегистрированного сотрудника
+            var allEmployees = service.GetAll();
+            var testEmployee = allEmployees.First(e => e.LastName == "Тестовый");
+            int employeeId = testEmployee.Id;
+
+            // Act
+            bool deleteResult = service.DeleteEmployee(employeeId, out errorMessage);
+
+            // Assert
+            Assert.IsTrue(deleteResult);
+            Assert.AreEqual("", errorMessage);
+        }
+
+        [TestMethod]
+        public void DeleteEmployee_NonExistentId_ShouldReturnError()
+        {
+            // Arrange
+            var service = new EmployeeService();
+            string errorMessage;
+
+            // Act
+            bool result = service.DeleteEmployee(9999, out errorMessage);
+
+            // Assert
+            Assert.IsFalse(result);
+            Assert.AreEqual("Сотрудник не найден.", errorMessage);
+        }
+    }
+
+    [TestClass]
+    public class EmployeeModelTest
+    {
+        [TestMethod]
+        public void Employee_FullName_ShouldConcatenateCorrectly()
+        {
+            // Arrange & Act
+            var employee = new Employee
             {
-                FullName = "Иванов@ Сергей", // некорректное ФИО
-                BirthDate = new DateTime(1985, 4, 15),
-                Position = "Оператор",
-                DepartmentId = 2,
-                HireDate = new DateTime(2023, 9, 1),
-                EmploymentType = "штатный"
+                LastName = "Иванов",
+                FirstName = "Иван",
+                MiddleName = "Иванович"
             };
 
-            // Действие
-            var result = service.RegisterEmployee(data);
+            // Assert
+            Assert.AreEqual("Иванов Иван Иванович", employee.FullName);
+        }
 
-            // Проверка
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Некорректное ФИО", result.ErrorMessage);
+        [TestMethod]
+        public void EmployeeRegistrationData_ShouldInitializeCorrectly()
+        {
+            // Arrange & Act
+            var registrationData = new EmployeeRegistrationData
+            {
+                LastName = "Сидоров",
+                FirstName = "Петр",
+                MiddleName = "Козьмич",
+                BirthDate = new DateTime(1978, 11, 10),
+                Position = "Бухгалтер",
+                DepartmentId = 3,
+                HireDate = new DateTime(2021, 11, 10),
+                EmploymentType = "Частичная"
+            };
+
+            // Assert
+            Assert.AreEqual("Сидоров", registrationData.LastName);
+            Assert.AreEqual("Петр", registrationData.FirstName);
+            Assert.AreEqual("Козьмич", registrationData.MiddleName);
         }
     }
 }

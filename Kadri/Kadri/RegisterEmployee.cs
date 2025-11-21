@@ -21,26 +21,26 @@ namespace Kadri
                 return;
 
             string errorMessage;
-            int departmentId = int.Parse(textBox3.Text);
+            int departmentId = int.Parse(textBoxDepartmentId.Text);
 
             bool result = service.RegisterEmployee(
-                textBox1.Text.Trim(),
-                dateTimePicker1.Value,
-                textBox2.Text.Trim(),
-                departmentId,
-                dateTimePicker2.Value,
-                textBox4.Text.Trim(),
-                employmentType.Text,
+                textBoxLastName.Text.Trim(),      // Фамилия
+                textBoxFirstName.Text.Trim(),     // Имя
+                textBoxMiddleName.Text.Trim(),    // Отчество
+                dateTimePickerBirthDate.Value,    // Дата рождения
+                textBoxPosition.Text.Trim(),      // Должность
+                departmentId,                     // ID отдела
+                dateTimePickerHireDate.Value,     // Дата приема
+                textBoxEmploymentType.Text.Trim(), // Тип занятости
                 out errorMessage
             );
 
             if (result)
             {
-                label7.Text = "Сотрудник успешно зарегистрирован!";
-                label7.ForeColor = Color.Green;
+                labelResult.Text = "Сотрудник успешно зарегистрирован!";
+                labelResult.ForeColor = Color.Green;
                 ClearForm();
 
-                // Автоматическое закрытие формы через 2 секунды
                 Timer timer = new Timer();
                 timer.Interval = 2000;
                 timer.Tick += (s, args) => {
@@ -52,43 +52,59 @@ namespace Kadri
             }
             else
             {
-                label7.Text = errorMessage;
-                label7.ForeColor = Color.Red;
+                labelResult.Text = errorMessage;
+                labelResult.ForeColor = Color.Red;
             }
         }
 
         private bool ValidateInput()
         {
-            // Проверка ФИО
-            if (string.IsNullOrWhiteSpace(textBox1.Text))
+            // Проверка фамилии
+            if (string.IsNullOrWhiteSpace(textBoxLastName.Text))
             {
-                ShowError("Введите ФИО сотрудника");
+                ShowError("Введите фамилию сотрудника");
                 return false;
             }
 
+            // Проверка имени
+            if (string.IsNullOrWhiteSpace(textBoxFirstName.Text))
+            {
+                ShowError("Введите имя сотрудника");
+                return false;
+            }
+
+            // Отчество может быть пустым - не проверяем
+
             // Проверка должности
-            if (string.IsNullOrWhiteSpace(textBox2.Text))
+            if (string.IsNullOrWhiteSpace(textBoxPosition.Text))
             {
                 ShowError("Введите должность");
                 return false;
             }
 
             // Проверка ID отдела
-            if (!int.TryParse(textBox3.Text, out int departmentId) || departmentId <= 0)
+            if (!int.TryParse(textBoxDepartmentId.Text, out int departmentId) || departmentId <= 0)
             {
                 ShowError("ID отдела должен быть положительным числом");
                 return false;
             }
 
+            // Проверка типа занятости
+            if (string.IsNullOrWhiteSpace(textBoxEmploymentType.Text))
+            {
+                ShowError("Введите тип занятости");
+                return false;
+            }
+
             // Проверка даты рождения (не может быть в будущем)
-            if (dateTimePicker1.Value > DateTime.Now)
+            if (dateTimePickerBirthDate.Value > DateTime.Now)
             {
                 ShowError("Дата рождения не может быть в будущем");
                 return false;
             }
 
             // Проверка даты приема (не может быть раньше даты рождения)
-            if (dateTimePicker2.Value < dateTimePicker1.Value)
+            if (dateTimePickerHireDate.Value < dateTimePickerBirthDate.Value)
             {
                 ShowError("Дата приема не может быть раньше даты рождения");
                 return false;
@@ -99,21 +115,22 @@ namespace Kadri
 
         private void ShowError(string message)
         {
-            label7.Text = message;
-            label7.ForeColor = Color.Red;
+            labelResult.Text = message;
+            labelResult.ForeColor = Color.Red;
         }
 
         private void ClearForm()
         {
-            textBox1.Clear();
-            textBox2.Clear();
-            textBox3.Clear();
-            textBox4.Clear();
-            dateTimePicker1.Value = DateTime.Now;
-            dateTimePicker2.Value = DateTime.Now;
+            textBoxLastName.Clear();
+            textBoxFirstName.Clear();
+            textBoxMiddleName.Clear();
+            textBoxPosition.Clear();
+            textBoxDepartmentId.Clear();
+            textBoxEmploymentType.Clear();
+            dateTimePickerBirthDate.Value = DateTime.Now;
+            dateTimePickerHireDate.Value = DateTime.Now;
         }
 
-        // Добавьте кнопку отмены
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;

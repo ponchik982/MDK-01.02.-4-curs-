@@ -1,12 +1,6 @@
 ﻿using HRApp;
+using HRApp.Services;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Kadri
@@ -18,123 +12,110 @@ namespace Kadri
         public MainHRForm()
         {
             InitializeComponent();
-            LoadEmployees(); // Загружаем данные при запуске формы
+            this.dataGridView1.DataError += dataGridView1_DataError;
+            // Убираем все сложные настройки из конструктора
+            LoadEmployees();
         }
 
-        // Метод для загрузки сотрудников в DataGridView
         private void LoadEmployees()
         {
             try
             {
-                var employees = service.GetAllEmployees();
-                dataGridView1.DataSource = employees;
+                dataGridView1.DataSource = null;
+                dataGridView1.DataSource = service.GetAllEmployees();
 
+                // Минимальные настройки колонок
                 if (dataGridView1.Columns.Count > 0)
                 {
-                    dataGridView1.Columns["Id"].HeaderText = "ID";
-                    dataGridView1.Columns["LastName"].HeaderText = "Фамилия";
-                    dataGridView1.Columns["FirstName"].HeaderText = "Имя";
-                    dataGridView1.Columns["MiddleName"].HeaderText = "Отчество";
-                    dataGridView1.Columns["FullName"].HeaderText = "Полное ФИО";
-                    dataGridView1.Columns["BirthDate"].HeaderText = "Дата рождения";
-                    dataGridView1.Columns["Position"].HeaderText = "Должность";
-                    dataGridView1.Columns["DepartmentId"].HeaderText = "ID отдела";
-                    dataGridView1.Columns["HireDate"].HeaderText = "Дата приема";
-                    dataGridView1.Columns["EmploymentType"].HeaderText = "Тип занятости";
-
-                    dataGridView1.Columns["BirthDate"].DefaultCellStyle.Format = "dd.MM.yyyy";
-                    dataGridView1.Columns["HireDate"].DefaultCellStyle.Format = "dd.MM.yyyy";
+                    dataGridView1.Columns["Id"].Visible = false; // Скрываем ID
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке сотрудников: {ex.Message}", "Ошибка",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ошибка при загрузке сотрудников: {ex.Message}", "Ошибка");
             }
         }
 
-        // В методе удаления обновляем получение имени
-        private void DeleteEmployee(int employeeId, string employeeName)
+        private void btnDeleteEmployee_Click(object sender, EventArgs e)
         {
-            try
+            if (dataGridView1.SelectedRows.Count == 0)
             {
-                string errorMessage;
-                bool success = service.DeleteEmployee(employeeId, out errorMessage);
-
-                if (success)
-                {
-                    MessageBox.Show(
-                        $"Сотрудник {employeeName} успешно удален!",
-                        "Успех",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                    LoadEmployees();
-                }
-                else
-                {
-                    MessageBox.Show(
-                        $"Ошибка при удалении: {errorMessage}",
-                        "Ошибка",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
-                }
+                MessageBox.Show("Выберите сотрудника для удаления");
+                return;
             }
-            catch (Exception ex)
+
+            var selectedRow = dataGridView1.SelectedRows[0];
+            var employee = selectedRow.DataBoundItem as Employee;
+
+            if (employee == null)
             {
-                MessageBox.Show(
-                    $"Ошибка при удалении сотрудника: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Не удалось получить данные сотрудника");
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить сотрудника {employee.FullName}?\nЭто действие необратимо.",
+                "Подтверждение удаления",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    string errorMessage;
+                    bool success = service.DeleteEmployee(employee.Id, out errorMessage);
+
+                    if (success)
+                    {
+                        MessageBox.Show($"Сотрудник {employee.FullName} успешно удален!", "Успех");
+                        LoadEmployees();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Ошибка при удалении: {errorMessage}", "Ошибка");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка");
+                }
             }
         }
 
-        // Обновите метод добавления сотрудника
         private void btnRegisterEmployee_Click(object sender, EventArgs e)
         {
             var registerForm = new RegisterEmployee();
             if (registerForm.ShowDialog() == DialogResult.OK)
             {
-                // Обновляем DataGridView после добавления нового сотрудника
                 LoadEmployees();
-                MessageBox.Show("Сотрудник успешно добавлен!", "Успех",
-                              MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Сотрудник успешно добавлен!", "Успех");
             }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Этот метод может использоваться для обработки кликов по ячейкам
-            // Например, если у вас есть кнопки в ячейках
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
-            {
-                var cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                // Ваша логика обработки клика
-            }
-        }
-
-        // Добавьте кнопку обновления данных
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             LoadEmployees();
         }
 
-        // Остальные ваши методы...
         private void btnViewEmployees_Click(object sender, EventArgs e)
         {
-            // Теперь можно убрать заглушку, так как данные отображаются в DataGridView
             MessageBox.Show("Данные сотрудников отображаются в таблице выше", "Информация");
         }
 
-        private void btnDeleteEmployee_Click(object sender, EventArgs e)
+        // Обработчик ошибок DataGridView
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            // Временно закомментируем, пока не создана форма
-            // var deleteForm = new DeleteEmployeeForm();
-            // deleteForm.ShowDialog();
-            MessageBox.Show("Функция удаления сотрудников в разработке", "Информация");
+            // Игнорируем ошибки DataGridView
+            e.ThrowException = false;
         }
+
+        // Простой обработчик клика
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ничего не делаем
+        }
+
     }
 }
