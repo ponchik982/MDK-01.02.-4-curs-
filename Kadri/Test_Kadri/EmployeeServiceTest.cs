@@ -81,7 +81,7 @@ namespace Test_Kadri
             );
 
             // Находим ID зарегистрированного сотрудника
-            var allEmployees = service.GetAll();
+            var allEmployees = service.GetAllEmployees();
             var testEmployee = allEmployees.First(e => e.LastName == "Тестовый");
             int employeeId = testEmployee.Id;
 

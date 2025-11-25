@@ -46,9 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Department.cs" />
     <Compile Include="Employee.cs" />
+    <Compile Include="EmployeeCardService.cs" />
+    <Compile Include="EmployeeDetails.cs" />
     <Compile Include="EmployeeService.cs" />
     <Compile Include="EmployeeRegistrationData.cs" />
+    <Compile Include="IDepartmentRepository.cs" />
+    <Compile Include="IEmployeeRepository.cs" />
     <Compile Include="MainHRForm.cs">
       <SubType>Form</SubType>
     </Compile>
